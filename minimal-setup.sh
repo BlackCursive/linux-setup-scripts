@@ -10,8 +10,7 @@ sudo apt update -y
 sudo apt install -y stacer curl git dolphin brave-browser snapd tasksel sddm gimp software-properties-common ubuntu-restricted-extras synaptic pavucontrol gparted p7zip-full p7zip-rar gpart 
 sudo apt update -y
 
-sudo dpkg-reconfigure sddm
-sudo tasksel install kubuntu-desktop
+sudo apt -y install kde-plasma-desktop plasma-nm
 sudo apt update -y
 
 sudo snap install code --classic && sudo snap install bitwarden mailspring joplin-james-carroll
