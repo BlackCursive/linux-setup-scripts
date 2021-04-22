@@ -13,9 +13,9 @@ sudo apt -y install kde-plasma-desktop plasma-nm
 
 echo "========= Installing Extras ========="
 sleep 1
-clear
 sudo apt update -y
 sudo apt install -y curl git dolphin sddm software-properties-common ubuntu-restricted-extras synaptic pavucontrol gparted p7zip-full p7zip-rar gpart 
+clear
 
 echo "======== Installing Bitwarden, Mailspring, Gimp & Joplin ========"
 sleep 1
@@ -72,9 +72,21 @@ sudo add-apt-repository ppa:deadsnakes/ppa
 sudo apt update -y
 sudo apt install python3.9
 
+echo "======== Installing Materia KDE ========"
+sleep 1
+clear
+wget -qO- https://raw.githubusercontent.com/PapirusDevelopmentTeam/materia-kde/master/install.sh | sh
+
 echo "======== Wrapping Up ========"
 sleep 1
 clear
 sudo apt full-upgrade -y --allow-downgrades
 sudo apt autoremove -y --purge
 sudo apt autoclean -y
+
+sudo dpkg --configure -a
+sudo apt-get upgrade -f
+sudo apt-get autoremove
+sudo apt clean
+sudo apt-get upgrade
+sudo reboot 
