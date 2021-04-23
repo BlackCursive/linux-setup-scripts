@@ -83,10 +83,8 @@ clear
 sudo apt full-upgrade -y --allow-downgrades
 sudo apt autoremove -y --purge
 sudo apt autoclean -y
-
 sudo dpkg --configure -a
 sudo apt-get upgrade -f
 sudo apt-get autoremove
-sudo apt clean
 sudo apt-get upgrade
 sudo reboot 
