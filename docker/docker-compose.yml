@@ -55,7 +55,8 @@ services:
       - PGID=1000
       - TZ=America/New_York
     volumes:
-      - /opt/data/radarr/config:/config
+      - ./radarr:/config
+      - /opt/data/plex/MOVIES:/movies
     restart: unless-stopped
 
   sonarr:
@@ -67,7 +68,8 @@ services:
       - PGID=1000
       - TZ=America/New_York
     volumes:
-      - /opt/data/sonarr/config:/config
+      - ./sonarr:/config
+      - /opt/data/plex/TV Shows:/tv
     restart: unless-stopped
 
   prowlarr:
@@ -79,7 +81,7 @@ services:
       - PGID=1000
       - TZ=America/New_York
     volumes:
-      - /opt/data/prowlarr/config:/config
+      - ./prowlarr:/config
     restart: unless-stopped
 
   overseerr:
@@ -91,5 +93,5 @@ services:
       - PGID=1000
       - TZ=America/New_York
     volumes:
-      - /opt/data/overseerr/config:/config
+      - ./overseerr:/config
     restart: unless-stopped
