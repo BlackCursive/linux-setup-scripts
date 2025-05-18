@@ -36,3 +36,13 @@ sudo systemctl daemon-reload
 ```
 sudo mount -a
 ```
+## Check Docker Connection to VPN (Docker Host Machine)
+#### Review the Public IP Address
+```
+docker logs gluetun
+```
+#### Replace (container_name) with the container you would liek to check the Public IP Address
+```
+docker exec -it conatiner_name bash
+wget -qO- https://ipinfo.io
+```
