@@ -37,7 +37,7 @@ sudo systemctl daemon-reload
 sudo mount -a
 ```
 ## Check Docker Connection to VPN (Docker Host Machine)
-#### Review the Public IP Address
+#### Check the Public IP Address by reviewing logs - Replace (gluetun) with any container dependant on gluetun
 ```
 docker logs gluetun
 ```
