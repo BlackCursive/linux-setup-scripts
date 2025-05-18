@@ -1,11 +1,14 @@
-# Modified from Jim's Garage Docker Compose File
+# Modified from Tech Hut's Docker Compose 
 
 name: arrstack
 services:
   gluetun:
     image: qmcgaw/gluetun
     container_name: gluetun
+    # Hostname to use for container, required in some instances for the rest of the stack to each other endpoints 
     hostname: gluetun
+    # line above must be uncommented to allow external containers to connect.
+    # See https://github.com/qdm12/gluetun-wiki/blob/main/setup/connect-a-container-to-gluetun.md#external-container-to-gluetun
     cap_add:
       - NET_ADMIN
     devices:
@@ -21,19 +24,34 @@ services:
     volumes:
       - /opt/data/gluetun:/gluetun
     environment:
+      # See https://github.com/qdm12/gluetun-wiki/tree/main/setup#setup
       - VPN_SERVICE_PROVIDER=nordvpn
       - VPN_TYPE=wireguard
+      # OpenVPN:
+      # - OPENVPN_USER=
+      # - OPENVPN_PASSWORD=
       # Wireguard:
       - WIREGUARD_PRIVATE_KEY=$Replace With Wireguard Key # See https://github.com/qdm12/gluetun-wiki/blob/main/setup/providers/nordvpn.md#obtain-your-wireguard-private-key
       - WIREGUARD_ADDRESSES=10.5.0.2/16
       - SERVER_COUNTRIES=UNITED STATES
+      # Timezone for accurate log times
       - TZ=America/New_York
+      # Server list updater
+      # See https://github.com/qdm12/gluetun-wiki/blob/main/setup/servers.md#update-the-vpn-servers-list
       - UPDATER_PERIOD=24h
+    restart: unless-stopped
+    healthcheck:
+      test: ping -c 1 www.google.com || exit 1
+      interval: 20s
+      timeout: 10s
+      retries: 5
 
   qbittorrent:
     image: lscr.io/linuxserver/qbittorrent
     container_name: qbittorrent
     network_mode: "service:gluetun"
+    labels:
+      - deunhealth.restart.on.unhealthy=true
     environment:
       - PUID=1000
       - PGID=1000
@@ -43,21 +61,43 @@ services:
       - /opt/data/qbittorrent/config:/config
       - /opt/data/qbittorrent/downloads:/downloads
     depends_on:
-      - gluetun
+      gluetun:
+        condition: service_healthy
     restart: always
+    healthcheck:
+      test: ping -c 1 www.google.com || exit 1
+      interval: 60s
+      retries: 3
+      start_period: 20s
+      timeout: 10s
 
-  radarr:
-    image: lscr.io/linuxserver/radarr:latest
-    container_name: radarr
+  deunhealth:
+    image: qmcgaw/deunhealth
+    container_name: deunhealth
+    network_mode: "none"
+    environment:
+      - LOG_LEVEL=info
+      - HEALTH_SERVER_ADDRESS=127.0.0.1:9999
+      - TZ=America/New_York
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
     network_mode: "service:gluetun"
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=America/New_York
     volumes:
-      - ./radarr:/config
-      - /opt/data/plex/MOVIES:/movies
+      - ./prowlarr:/config
     restart: unless-stopped
+    depends_on:
+      gluetun:
+        condition: service_healthy
+        restart: true
 
   sonarr:
     image: lscr.io/linuxserver/sonarr:latest
@@ -70,18 +110,20 @@ services:
     volumes:
       - ./sonarr:/config
       - /opt/data/plex/TV Shows:/tv
+    # - /home/ubuntu/docker/arr-stack/sonarr/downloadclient-downloads:/downloads #optional
     restart: unless-stopped
 
-  prowlarr:
-    image: lscr.io/linuxserver/prowlarr:latest
-    container_name: prowlarr
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
     network_mode: "service:gluetun"
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=America/New_York
     volumes:
-      - ./prowlarr:/config
+      - ./radarr:/config
+      - /opt/data/plex/MOVIES:/movies
     restart: unless-stopped
 
   overseerr:
