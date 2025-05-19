@@ -109,7 +109,7 @@ services:
       - TZ=America/New_York
     volumes:
       - ./sonarr:/config
-      - /opt/data/plex/TV Shows:/tv
+      - /opt/plex/TV Shows:/tv
     # - /home/ubuntu/docker/arr-stack/sonarr/downloadclient-downloads:/downloads #optional
     restart: unless-stopped
 
@@ -123,7 +123,7 @@ services:
       - TZ=America/New_York
     volumes:
       - ./radarr:/config
-      - /opt/data/plex/MOVIES:/movies
+      - /opt/plex/MOVIES:/movies
     restart: unless-stopped
 
   overseerr:
