@@ -46,3 +46,7 @@ docker logs gluetun
 docker exec -it conatiner_name bash
 wget -qO- https://ipinfo.io
 ```
+
+## Sonarr - TV Show Naming Convention
+#### https://thetvdb.com/
+The Office (US) (2005) {tvdb-73244}
